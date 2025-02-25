@@ -2,6 +2,8 @@
 
 This project provides an online platform for citizens to report crimes anonymously and allows law enforcement to efficiently manage and track those reports.  It aims to improve community safety and provide a secure and accessible way to report criminal activity.
 
+-- In development
+
 ## Features
 
 This system offers the following key features:
