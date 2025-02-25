@@ -15,12 +15,18 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  role          String          @default("user")
+  role          String          @default("CITIZEN")
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
+
+  // Functionality Part related to the application
+
+  reports       Report[]  @relation("reportedBy")
+  comments      Comment[] @relation("commentedBy")
+  assignedCases Report[]  @relation("assignedTo")
 }
 
 model Account {
@@ -84,3 +90,171 @@ model Authenticator {
 // **************************************************************
 // Functionality Part related to the application
 // **************************************************************
+
+enum UserRole {
+  ADMIN
+  POLICE_OFFICER
+  INVESTIGATOR
+  CITIZEN
+}
+
+model Report {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  description      String
+  incidentDate     DateTime
+  location         Location
+  reportType       ReportType
+  status           ReportStatus      @default(SUBMITTED)
+  priority         Priority          @default(MEDIUM)
+  evidenceIds      String[]          @db.ObjectId
+  evidence         Evidence[]        @relation(fields: [evidenceIds], references: [id])
+  reporterId       String            @db.ObjectId
+  reporter         User              @relation("reportedBy", fields: [reporterId], references: [id])
+  assignedToId     String?           @db.ObjectId
+  assignedTo       User?             @relation("assignedTo", fields: [assignedToId], references: [id])
+  comments         Comment[]
+  witnesses        Witness[]         @relation("reportWitnesses")
+  suspects         Suspect[]         @relation("reportSuspects")
+  mediaAttachments MediaAttachment[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  categoryId       String?           @db.ObjectId
+  category         Category?         @relation(fields: [categoryId], references: [id])
+
+  @@index([location.coordinates.coordinates], name: "location_coordinates")
+}
+
+type Location {
+  address     String?
+  city        String
+  state       String
+  country     String       @default("India")
+  postalCode  String? // Optional is good for international addresses
+  coordinates Coordinates? // GeoJSON
+
+  landmark String?
+}
+
+type Coordinates {
+  type        String  @default("Point")
+  coordinates Float[] // [longitude, latitude]
+}
+
+enum ReportType {
+  THEFT
+  ASSAULT
+  VANDALISM
+  FRAUD
+  MISSING_PERSON
+  DOMESTIC_VIOLENCE
+  BURGLARY
+  ACCIDENT
+  DRUG_RELATED
+  OTHER
+}
+
+enum ReportStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  INVESTIGATING
+  RESOLVED
+  CLOSED
+  REJECTED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Comment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  content    String
+  reportId   String   @db.ObjectId
+  report     Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  userId     String   @db.ObjectId
+  user       User     @relation("commentedBy", fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isInternal Boolean  @default(false)
+}
+
+model Evidence {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
+  type            String
+  storageLocation String?
+  collectedAt     DateTime
+  chainOfCustody  CustodyRecord[]
+  reportIds       String[]        @db.ObjectId
+  reports         Report[]        @relation(fields: [reportIds], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model CustodyRecord {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  evidenceId String   @db.ObjectId
+  evidence   Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
+  handedBy   String
+  receivedBy String
+  timestamp  DateTime @default(now())
+  notes      String?
+}
+
+model Witness {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  lastName  String
+  contact   String?
+  statement String?
+  reportId  String   @db.ObjectId
+  report    Report   @relation("reportWitnesses", fields: [reportId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Suspect {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName   String?
+  lastName    String?
+  description String
+  status      SuspectStatus @default(UNDER_INVESTIGATION)
+  reportId    String        @db.ObjectId
+  report      Report        @relation("reportSuspects", fields: [reportId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum SuspectStatus {
+  UNKNOWN
+  UNDER_INVESTIGATION
+  PERSON_OF_INTEREST
+  WANTED
+  APPREHENDED
+  CLEARED
+}
+
+model MediaAttachment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  fileName   String
+  fileType   String
+  fileSize   Int
+  fileUrl    String
+  uploadDate DateTime @default(now())
+  reportId   String   @db.ObjectId
+  report     Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  reports     Report[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
