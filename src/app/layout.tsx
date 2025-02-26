@@ -21,11 +21,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";
-import { CircleUser, Gem } from "lucide-react";
+import { CircleUser, Fingerprint } from "lucide-react";
 // import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Icons } from "@/components/icons";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+
 
 import { auth, signOut } from "../lib/auth";
 
@@ -57,7 +57,7 @@ export default async function RootLayout({
             href="/"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
-            <Gem className="h-6 w-6" />
+            <Fingerprint className="h-6 w-6" />
             <span className="sr-only">CRS</span>
           </Link>
 
@@ -202,18 +202,15 @@ function NavMenu() {
             <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
-                  <Link
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                    href="/"
-                  >
-                    <Icons.Gem className="h-6 w-6" />
+                  <div className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md">
+                    <Fingerprint className="h-6 w-6" />
                     <div className="mb-2 mt-4 text-lg font-medium">CRS</div>
                     <p className="text-sm leading-tight text-muted-foreground">
-                      CRS - Crime Reporting System. A secure platform for citizens 
-                      to report crimes, track case progress, and collaborate with 
-                      law enforcement for safer communities.
+                      CRS - Crime Reporting System. A secure platform for
+                      citizens to report crimes, track case progress, and
+                      collaborate with law enforcement for safer communities.
                     </p>
-                  </Link>
+                  </div>
                 </NavigationMenuLink>
               </li>
               <ListItem href="/docs" title="Introduction">
@@ -222,8 +219,8 @@ function NavMenu() {
               <ListItem href="/dashboard" title="Dashboard">
                 Go to Dashboard. An overview of your business.
               </ListItem>
-              <ListItem href="/menu/adminusers" title="Manage Admin Users">
-                Manage Admin Users. Add, Edit, Delete Admin Users.
+              <ListItem href="/account/settings" title="Manage your Account">
+                Manage your account settings and preferences.
               </ListItem>
             </ul>
           </NavigationMenuContent>
@@ -296,14 +293,14 @@ ListItem.displayName = "ListItem";
 
 const components: { title: string; href: string; description: string }[] = [
   {
-    title: "Orders",
-    href: "/menu/orders",
-    description: "Add new orders and transactions",
+    title: "File Complaints",
+    href: "/menu/complaints/new",
+    description: "Add new complaints and manage reports",
   },
   {
-    title: "Products",
-    href: "/menu/products",
-    description: "Add new products and manage inventory",
+    title: "View All Complaints",
+    href: "/menu/complaints",
+    description: "Review and manage all submitted complaints",
   },
   {
     title: "Customers",
