@@ -8,7 +8,6 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -245,21 +244,7 @@ function NavMenu() {
               ))}
             </ul>
           </NavigationMenuContent>
-        </NavigationMenuItem>
-
-        {/* Item three */}
-        <NavigationMenuItem>
-          <Link href="/inventory" legacyBehavior passHref>
-            <NavigationMenuLink
-              className={
-                navigationMenuTriggerStyle() +
-                " hover:underline hover:underline-offset-4"
-              }
-            >
-              Visit Site
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        </NavigationMenuItem>        
       </NavigationMenuList>
     </NavigationMenu>
   );
