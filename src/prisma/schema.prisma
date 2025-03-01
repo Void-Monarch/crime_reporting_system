@@ -106,7 +106,7 @@ model Report {
   location         Location
   reportType       ReportType
   status           ReportStatus      @default(SUBMITTED)
-  priority         Priority          @default(MEDIUM)
+  priority         Priority          @default(NORMAL)
   evidenceIds      String[]          @db.ObjectId
   evidence         Evidence[]        @relation(fields: [evidenceIds], references: [id])
   reporterId       String            @db.ObjectId
@@ -165,7 +165,7 @@ enum ReportStatus {
 
 enum Priority {
   LOW
-  MEDIUM
+  NORMAL
   HIGH
   CRITICAL
 }

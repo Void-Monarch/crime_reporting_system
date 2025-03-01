@@ -17,8 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import { auth } from "@/lib/auth";
-// import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import StatusIndicators from "@/components/custom/elements/StatusIndicators";
 import TableAlert from "@/components/custom/elements/TableAlert";
 import {
@@ -27,7 +27,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,8 +38,8 @@ import {
 
 export default async function Dashboard() {
   // *****************************************************
-  // const session = await auth();
-  // if (!session) redirect("/account/login");
+  const session = await auth();
+  if (!session) redirect("/account/login");
   // *****************************************************
 
   return (
@@ -220,10 +219,6 @@ export default async function Dashboard() {
           </Card>
         </div>
       </main>
-      <footer className="flex flex-col gap-y-1 absolute bottom-0 justify-center items-center w-full h-16 content-end bg-gray-100">
-        <Separator className="w-[90%]" />
-        <p className="text-sm text-gray-500">© 2025 All rights reserved.</p>
-      </footer>
     </div>
   );
 }
