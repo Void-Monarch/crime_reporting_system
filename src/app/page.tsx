@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, FileText, Phone, Shield, Users } from "lucide-react";
+import { AlertTriangle, FileText, Fingerprint, Phone, Shield, Users } from "lucide-react";
 
 export default function page() {
   return (
@@ -33,8 +33,11 @@ export default function page() {
                 </div>
               </div>
               <div className="relative h-[350px] overflow-hidden rounded-lg">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90 rounded-lg"></div>
-                <div className="absolute inset-0 flex items-center justify-center text-white p-6">
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 opacity-90 rounded-lg"
+                  id="homeBG"
+                ></div>
+                <div className="absolute inset-0 flex items-center justify-center text-red-500 p-6">
                   <div className="text-center space-y-4">
                     <h2 className="text-2xl font-bold">Emergency?</h2>
                     <p className="text-xl">
@@ -234,8 +237,8 @@ export default function page() {
         <div className="container flex flex-col gap-6 py-8 md:flex-row md:items-center md:justify-between md:py-12">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <Shield className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">CitizenSafe</span>
+              <Fingerprint className="h-6 w-6 text-primary" />
+              <span className="text-xl font-bold">Crime Reporting System</span>
             </div>
             <p className="text-sm text-muted-foreground">
               Empowering citizens to help keep communities safe.

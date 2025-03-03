@@ -121,3 +121,9 @@ body {
   66%  {background-position: 250% 0,-150% 0}
   100% {background-position: 250% 0, 250% 0}
 }
+
+#homeBG{
+  background-image: url('../../public/136956957_10352040.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
