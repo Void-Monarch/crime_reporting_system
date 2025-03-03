@@ -59,10 +59,7 @@ const formSchema = z.object({
     .min(2, { message: "Last name must be at least 2 characters." })
     .optional(),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z
-    .string()
-    .min(10, { message: "Please enter a valid phone number." })
-    .optional(),
+  phone: z.string().optional(),
   anonymous: z.boolean().default(false).optional(),
 
   // Incident details
