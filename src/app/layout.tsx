@@ -157,8 +157,9 @@ export default async function RootLayout({
                 ) : null}
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                <Link href="/account/profile" passHref>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 {session?.user ? (
                   <form
@@ -211,11 +212,11 @@ function NavMenu() {
                   </div>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="/docs" title="Introduction">
+              <ListItem href="/" title="Introduction">
                 Get to know more about the platform and its features.
               </ListItem>
               <ListItem href="/dashboard" title="Dashboard">
-                Go to Dashboard. An overview of your business.
+                Go to Dashboard.
               </ListItem>
               <ListItem href="/account/profile" title="Manage your Account">
                 Manage your account settings and preferences.
