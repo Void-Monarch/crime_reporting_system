@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { type User } from "@auth/core/types";
+import { UpUser } from "../../../account/profile/ProfileForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -47,7 +47,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   submitCrimeReport,
   CrimeReportType,
-} from "@/server_action/accounts/actions";
+} from "@/server_action/complaints/actions";
 
 const formSchema = z.object({
   // Reporter information
@@ -58,9 +58,7 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Last name must be at least 2 characters." })
     .optional(),
-  email: z
-    .string()
-    .email({ message: "Please enter a valid email address." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
   phone: z
     .string()
     .min(10, { message: "Please enter a valid phone number." })
@@ -80,9 +78,8 @@ const formSchema = z.object({
     .string()
     .min(5, { message: "Please provide the city." }),
   incidentLocationPostalCode: z
-    .number()
-    .int({ message: "Please provide a valid postal code." })
-    .min(100000, { message: "Postal code must be at least 5 digits." }),
+    .string()
+    .min(5, { message: "Please provide the postal code." }),
   incidentLocationAddress: z
     .string()
     .min(5, { message: "Please provide the address." }),
@@ -90,6 +87,9 @@ const formSchema = z.object({
   latitude: z.string().optional(),
   longitude: z.string().optional(),
   crimeType: z.string({ required_error: "Please select a crime type." }),
+  incidentTitle: z
+    .string()
+    .min(5, { message: "Please provide a title for the incident." }),
   incidentDescription: z
     .string()
     .min(20, { message: "Please provide at least 20 characters." }),
@@ -112,7 +112,7 @@ const formSchema = z.object({
   }),
 });
 
-export default function CrimeReportForm({ user }: { user: User | undefined }) {
+export default function CrimeReportForm({ user }: { user: UpUser }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
@@ -135,10 +135,11 @@ export default function CrimeReportForm({ user }: { user: User | undefined }) {
       firstName: user?.name?.split(" ")[0] || "",
       lastName: user?.name?.split(" ")[1] || "",
       email: user?.email || "",
-      phone: "",
+      phone: user?.phone || "",
       anonymous: false,
-      incidentLocationState: "",
-      incidentLocationCity: "",
+      incidentLocationState: user.state || "",
+      incidentLocationCity: user.city || "",
+      incidentLocationPostalCode: "",
       incidentLocationAddress: "",
       incidentDate: new Date(),
       incidentTime: "",
@@ -152,8 +153,8 @@ export default function CrimeReportForm({ user }: { user: User | undefined }) {
       evidenceDescription: "",
       consent: false,
       currentLocation: false,
-      latitude: "",
-      longitude: "",
+      latitude: "0",
+      longitude: "0",
     },
   });
 
@@ -194,7 +195,10 @@ export default function CrimeReportForm({ user }: { user: User | undefined }) {
 
     try {
       // Call the server action with the form data
-      const result = await submitCrimeReport(values as CrimeReportType);
+      const result = await submitCrimeReport(
+        user!.id!,
+        values as CrimeReportType
+      );
 
       setSubmissionResult(result);
       setIsSubmitted(result.success);
@@ -687,27 +691,24 @@ export default function CrimeReportForm({ user }: { user: User | undefined }) {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="theft">Theft</SelectItem>
-                              <SelectItem value="burglary">Burglary</SelectItem>
-                              <SelectItem value="assault">Assault</SelectItem>
-                              <SelectItem value="vandalism">
-                                Vandalism
+                              <SelectItem value="THEFT">THEFT</SelectItem>
+                              <SelectItem value="ASSAULT">ASSAULT</SelectItem>
+                              <SelectItem value="VANDALISM">
+                                VANDALISM
                               </SelectItem>
-                              <SelectItem value="fraud">Fraud</SelectItem>
-                              <SelectItem value="accident">Accident</SelectItem>
-                              <SelectItem value="missing_person">
-                                Missing Person
+                              <SelectItem value="FRAUD">FRAUD</SelectItem>
+                              <SelectItem value="MISSING_PERSON">
+                                MISSING PERSON
                               </SelectItem>
-                              <SelectItem value="drug_related">
-                                Drug Related
+                              <SelectItem value="DOMESTIC_VIOLENCE">
+                                DOMESTIC VIOLENCE
                               </SelectItem>
-                              <SelectItem value="harassment">
-                                Harassment
+                              <SelectItem value="BURGLARY">BURGLARY</SelectItem>
+                              <SelectItem value="ACCIDENT">ACCIDENT</SelectItem>
+                              <SelectItem value="DRUG_RELATED">
+                                DRUG RELATED
                               </SelectItem>
-                              <SelectItem value="domestic_violence">
-                                Domestic Violence
-                              </SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
+                              <SelectItem value="OTHER">OTHER</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -730,10 +731,10 @@ export default function CrimeReportForm({ user }: { user: User | undefined }) {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="low">Low</SelectItem>
-                              <SelectItem value="normal">Normal</SelectItem>
-                              <SelectItem value="high">High</SelectItem>
-                              <SelectItem value="critical">Critical</SelectItem>
+                              <SelectItem value="LOW">Low</SelectItem>
+                              <SelectItem value="NORMAL">Normal</SelectItem>
+                              <SelectItem value="HIGH">High</SelectItem>
+                              <SelectItem value="CRITICAL">Critical</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -741,6 +742,24 @@ export default function CrimeReportForm({ user }: { user: User | undefined }) {
                       )}
                     />
                   </div>
+                  <FormField
+                    control={form.control}
+                    name="incidentTitle"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Incident Title</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <Input
+                              placeholder="Enter the incident title"
+                              {...field}
+                            />
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <FormField
                     control={form.control}
                     name="incidentDescription"

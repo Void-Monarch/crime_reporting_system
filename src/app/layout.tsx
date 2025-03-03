@@ -25,7 +25,6 @@ import { CircleUser, Fingerprint } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-
 import { auth, signOut } from "../lib/auth";
 
 export const metadata: Metadata = {
@@ -213,12 +212,12 @@ function NavMenu() {
                 </NavigationMenuLink>
               </li>
               <ListItem href="/docs" title="Introduction">
-                Re-usable components built using Radix UI and Tailwind CSS.
+                Get to know more about the platform and its features.
               </ListItem>
               <ListItem href="/dashboard" title="Dashboard">
                 Go to Dashboard. An overview of your business.
               </ListItem>
-              <ListItem href="/account/settings" title="Manage your Account">
+              <ListItem href="/account/profile" title="Manage your Account">
                 Manage your account settings and preferences.
               </ListItem>
             </ul>
@@ -244,7 +243,7 @@ function NavMenu() {
               ))}
             </ul>
           </NavigationMenuContent>
-        </NavigationMenuItem>        
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );
@@ -286,27 +285,5 @@ const components: { title: string; href: string; description: string }[] = [
     title: "View All Complaints",
     href: "/menu/complaints",
     description: "Review and manage all submitted complaints",
-  },
-  {
-    title: "Customers",
-    href: "/menu/customers",
-    description:
-      "Displays a list of customers, their contact information, and order history.",
-  },
-  {
-    title: "Transactions",
-    href: "/menu/transactions",
-    description: "View and manage transactions",
-  },
-  {
-    title: "=pending=",
-    href: "/",
-    description: "A tabbed interface for switching between different views.",
-  },
-  {
-    title: "=lorem=",
-    href: "/",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
   },
 ];

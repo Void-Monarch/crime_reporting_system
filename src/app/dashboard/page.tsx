@@ -35,12 +35,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { getReportByUserId } from "@/lib/data_queries";
+import { Suspense } from "react";
+import Loader from "@/components/custom/Loaders/MainLoader";
 
 export default async function Dashboard() {
   // *****************************************************
   const session = await auth();
   if (!session) redirect("/account/login");
   // *****************************************************
+
+  const reports = await getReportByUserId(session!.user!.id!);
 
   return (
     <div className="flex w-full flex-col">
@@ -125,81 +130,46 @@ export default async function Dashboard() {
             <CardHeader className="flex flex-row items-center">
               <CardTitle>Your Recent Reports</CardTitle>
               <Button asChild size="sm" className="ml-auto gap-1">
-                <Link href="#">
+                <Link href="/menu/complaints" passHref>
                   View All
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </Button>
             </CardHeader>
-            <CardContent className="grid gap-8 h-full content-start">
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                  <AvatarFallback>OM</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    Olivia Martin
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    olivia.martin@email.com
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">
-                  <StatusIndicators
-                    text="In Progress"
-                    variant="default"
-                    type="open"
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardContent className="grid gap-8 h-full content-start">
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                  <AvatarFallback>OM</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    Olivia Martin
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    olivia.martin@email.com
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">
-                  <StatusIndicators
-                    text="Rejected"
-                    variant="default"
-                    type="rejected"
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardContent className="grid gap-8 h-full content-start">
-              <div className="flex items-center gap-4">
-                <Avatar className="hidden h-9 w-9 sm:flex">
-                  <AvatarImage src="/avatars/01.png" alt="Avatar" />
-                  <AvatarFallback>OM</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <p className="text-sm font-medium leading-none">
-                    Olivia Martin
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    olivia.martin@email.com
-                  </p>
-                </div>
-                <div className="ml-auto font-medium">
-                  <StatusIndicators
-                    text="Closed"
-                    variant="default"
-                    type="closed"
-                  />
-                </div>
-              </div>
-            </CardContent>
+            <Suspense fallback={<Loader />}>
+              {reports.length > 0 ? (
+                reports.map((report, key) => (
+                  <CardContent
+                    key={key}
+                    className="grid gap-8 h-full content-start"
+                  >
+                    <div className="flex items-center gap-4">
+                      <Avatar className="hidden h-9 w-9 sm:flex">
+                        <AvatarImage src="/avatars/01.png" alt="Avatar" />
+                        <AvatarFallback>OM</AvatarFallback>
+                      </Avatar>
+                      <div className="grid gap-1">
+                        <p className="text-sm font-medium leading-none">
+                          {report.title}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {report.description.slice(0, 35)}...
+                        </p>
+                      </div>
+                      <div className="ml-auto font-medium">
+                        <StatusIndicators
+                          text={report.status}
+                          variant="default"
+                          type={report.status}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                ))
+              ) : (
+                <CardContent>No reports found</CardContent>
+              )}
+            </Suspense>
             <CardFooter className="justify-end place-self-end">
               <TooltipProvider delayDuration={200}>
                 <Tooltip>

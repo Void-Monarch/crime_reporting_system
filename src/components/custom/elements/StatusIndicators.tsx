@@ -7,13 +7,15 @@ export default function StatusIndicators({
 }: {
   text: string;
   variant: BadgeProps["variant"];
-  type: "open" | "closed" | "paused" | "rejected";
+  type: "SUBMITTED" | "UNDER_REVIEW" | "INVESTIGATING" | "RESOLVED" | "CLOSED" | "REJECTED";
 }) {
   const variantClasses = {
-    open: "bg-green-400",
-    closed: "bg-red-400",
-    paused: "bg-yellow-400",
-    rejected: "bg-gray-400",
+    SUBMITTED: "bg-blue-400",
+    UNDER_REVIEW: "bg-yellow-400",
+    INVESTIGATING: "bg-purple-400",
+    RESOLVED: "bg-green-400",
+    CLOSED: "bg-gray-400",
+    REJECTED: "bg-red-400",
   };
 
   return (

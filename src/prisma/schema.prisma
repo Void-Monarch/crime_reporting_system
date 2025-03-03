@@ -24,9 +24,14 @@ model User {
 
   // Functionality Part related to the application
 
-  reports       Report[]  @relation("reportedBy")
-  comments      Comment[] @relation("commentedBy")
-  assignedCases Report[]  @relation("assignedTo")
+  reports  Report[]  @relation("reportedBy")
+  comments Comment[] @relation("commentedBy")
+
+  // Additional Details related to the User
+  phone String?
+  state String?
+  city String?
+  postalCode String?
 }
 
 model Account {
@@ -103,26 +108,21 @@ model Report {
   title            String
   description      String
   incidentDate     DateTime
+  incidentTime     String?
   location         Location
   reportType       ReportType
   status           ReportStatus      @default(SUBMITTED)
   priority         Priority          @default(NORMAL)
-  evidenceIds      String[]          @db.ObjectId
-  evidence         Evidence[]        @relation(fields: [evidenceIds], references: [id])
-  reporterId       String            @db.ObjectId
-  reporter         User              @relation("reportedBy", fields: [reporterId], references: [id])
-  assignedToId     String?           @db.ObjectId
-  assignedTo       User?             @relation("assignedTo", fields: [assignedToId], references: [id])
+  evidence         String?
+  reporterId       String?           @db.ObjectId
+  reporter         User?             @relation("reportedBy", fields: [reporterId], references: [id])
+  anonymous        Boolean           @default(false)
   comments         Comment[]
-  witnesses        Witness[]         @relation("reportWitnesses")
-  suspects         Suspect[]         @relation("reportSuspects")
+  witnesses        String?
+  suspects         String?
   mediaAttachments MediaAttachment[]
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
-  categoryId       String?           @db.ObjectId
-  category         Category?         @relation(fields: [categoryId], references: [id])
-
-  @@index([location.coordinates.coordinates], name: "location_coordinates")
 }
 
 type Location {
@@ -182,63 +182,6 @@ model Comment {
   isInternal Boolean  @default(false)
 }
 
-model Evidence {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  description     String
-  type            String
-  storageLocation String?
-  collectedAt     DateTime
-  chainOfCustody  CustodyRecord[]
-  reportIds       String[]        @db.ObjectId
-  reports         Report[]        @relation(fields: [reportIds], references: [id])
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-}
-
-model CustodyRecord {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  evidenceId String   @db.ObjectId
-  evidence   Evidence @relation(fields: [evidenceId], references: [id], onDelete: Cascade)
-  handedBy   String
-  receivedBy String
-  timestamp  DateTime @default(now())
-  notes      String?
-}
-
-model Witness {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  firstName String
-  lastName  String
-  contact   String?
-  statement String?
-  reportId  String   @db.ObjectId
-  report    Report   @relation("reportWitnesses", fields: [reportId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Suspect {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  firstName   String?
-  lastName    String?
-  description String
-  status      SuspectStatus @default(UNDER_INVESTIGATION)
-  reportId    String        @db.ObjectId
-  report      Report        @relation("reportSuspects", fields: [reportId], references: [id], onDelete: Cascade)
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-}
-
-enum SuspectStatus {
-  UNKNOWN
-  UNDER_INVESTIGATION
-  PERSON_OF_INTEREST
-  WANTED
-  APPREHENDED
-  CLEARED
-}
-
 model MediaAttachment {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   fileName   String
@@ -248,13 +191,4 @@ model MediaAttachment {
   uploadDate DateTime @default(now())
   reportId   String   @db.ObjectId
   report     Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
-}
-
-model Category {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   @unique
-  description String?
-  reports     Report[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
