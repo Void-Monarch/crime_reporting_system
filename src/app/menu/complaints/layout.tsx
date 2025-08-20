@@ -30,7 +30,6 @@ export default async function Layout({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>Complaints</BreadcrumbPage>
             </BreadcrumbItem>
