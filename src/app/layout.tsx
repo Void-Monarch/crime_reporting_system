@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -182,6 +183,7 @@ export default async function RootLayout({
           </div>
         </header>
         <main className="">{children}</main>
+        <Toaster richColors />
       </body>
     </html>
   );

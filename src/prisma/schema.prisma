@@ -28,10 +28,12 @@ model User {
   comments Comment[] @relation("commentedBy")
 
   // Additional Details related to the User
-  phone String?
-  state String?
-  city String?
-  postalCode String?
+  phone            String?
+  state            String?
+  city             String?
+  postalCode       String?
+  aadhaarNumber    String? @unique
+  profileCompleted Boolean @default(false)
 }
 
 model Account {
@@ -116,7 +118,6 @@ model Report {
   evidence         String?
   reporterId       String?           @db.ObjectId
   reporter         User?             @relation("reportedBy", fields: [reporterId], references: [id])
-  anonymous        Boolean           @default(false)
   comments         Comment[]
   witnesses        String?
   suspects         String?

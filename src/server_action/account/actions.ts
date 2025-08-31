@@ -12,6 +12,7 @@ const updateUserSchema = z.object({
     phone: z.string().optional(),
     state: z.string().optional(),
     city: z.string().optional(),
+    aadhaarNumber: z.string().optional(),
     postalCode: z.string().optional(),
 });
 
@@ -19,8 +20,8 @@ export async function updateUserForm(formData: FormData) {
     try {
         // Validate data
         const validatedData = updateUserSchema.parse(formData);
-        const { id, name, phone, state, city, postalCode } = validatedData;
-        const data = { name, phone, state, city, postalCode };
+        const { id, name, phone, state, city, postalCode, aadhaarNumber } = validatedData;
+        const data = { name, phone, state, city, postalCode, aadhaarNumber };
 
 
 

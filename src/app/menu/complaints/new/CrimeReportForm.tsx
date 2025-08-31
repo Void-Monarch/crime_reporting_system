@@ -5,6 +5,7 @@ import { UpUser } from "../../../account/profile/ProfileForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { CalendarIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -54,14 +55,16 @@ const formSchema = z.object({
   firstName: z
     .string()
     .min(2, { message: "First name must be at least 2 characters." }),
-  lastName: z
-    .string()
-    .min(2, { message: "Last name must be at least 2 characters." })
-    .optional(),
+  lastName: z.string().optional(),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().optional(),
-  anonymous: z.boolean().default(false).optional(),
-
+  phone: z
+    .string()
+    .min(10, { message: "Phone number must be at least 10 characters." }),
+  aadharNumber: z
+    .string({
+      required_error: "Please update your Aadhar number from the profile page.",
+    })
+    .min(10, { message: "Update Aadhar." }),
   // Incident details
   incidentDate: z.date({ required_error: "Please select a date." }),
   incidentTime: z
@@ -133,7 +136,7 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
       lastName: user?.name?.split(" ")[1] || "",
       email: user?.email || "",
       phone: user?.phone || "",
-      anonymous: false,
+      aadharNumber: user?.aadhaarNumber || "",
       incidentLocationState: user.state || "",
       incidentLocationCity: user.city || "",
       incidentLocationPostalCode: "",
@@ -165,6 +168,7 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
             (position) => {
               form.setValue("latitude", position.coords.latitude.toString());
               form.setValue("longitude", position.coords.longitude.toString());
+              toast.success("Location obtained successfully.");
             },
             (error) => {
               console.error("Error getting location", error);
@@ -181,6 +185,7 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
       } else if (name === "currentLocation" && !value.currentLocation) {
         form.setValue("latitude", "");
         form.setValue("longitude", "");
+        toast.info("Location sharing disabled.");
       }
     });
 
@@ -199,12 +204,14 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
 
       setSubmissionResult(result);
       setIsSubmitted(result.success);
+      toast.success(result.message);
     } catch (error) {
       console.error("Error in form submission:", error);
       setSubmissionResult({
         success: false,
         message: "An unexpected error occurred. Please try again.",
       });
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -291,11 +298,7 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
                         <FormItem>
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="John"
-                              disabled={form.watch("anonymous")}
-                              {...field}
-                            />
+                            <Input placeholder="John" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -308,11 +311,7 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
                         <FormItem>
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Doe"
-                              {...field}
-                              disabled={form.watch("anonymous")}
-                            />
+                            <Input placeholder="Doe" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -331,7 +330,6 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
                             <Input
                               type="email"
                               placeholder="john.doe@example.com"
-                              disabled={form.watch("anonymous")}
                               {...field}
                             />
                           </FormControl>
@@ -346,33 +344,27 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
                         <FormItem>
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="(555) 123-4567"
-                              {...field}
-                              disabled={form.watch("anonymous")}
-                            />
+                            <Input placeholder="(555) 123-4567" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
-                      name="anonymous"
+                      name="aadharNumber"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormItem>
+                          <FormLabel>Aadhar Number</FormLabel>
                           <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
+                            <Input
+                              placeholder="Update Aadhar number from profile page !"
+                              {...field}
+                              disabled
                             />
                           </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel>Do you want to be anonymous ?</FormLabel>
-                            <FormDescription>
-                              Check this box if you want to be anonymous.
-                            </FormDescription>
-                          </div>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />

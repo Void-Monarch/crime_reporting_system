@@ -29,3 +29,10 @@ export async function updateUser(id: string, data: User) {
         data: { ...data },
     });
 }
+
+export async function updateUserAddhar(id: string, aadhaarNumber: User["aadhaarNumber"]) {
+    return await prisma.user.update({
+        where: { id },
+        data: { aadhaarNumber },
+    });
+}

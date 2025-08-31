@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, FileText, Fingerprint, Phone, Shield, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  FileText,
+  Fingerprint,
+  Shield,
+  Users,
+} from "lucide-react";
 
 export default function page() {
   return (
@@ -38,19 +44,7 @@ export default function page() {
                   id="homeBG"
                 ></div>
                 <div className="absolute inset-0 flex items-center justify-center text-red-500 p-6">
-                  <div className="text-center space-y-4">
-                    <h2 className="text-2xl font-bold">Emergency?</h2>
-                    <p className="text-xl">
-                      For immediate assistance, please call:
-                    </p>
-                    <div className="flex items-center justify-center gap-2 text-3xl font-bold">
-                      <Phone className="h-8 w-8" />
-                      <span>112</span>
-                    </div>
-                    <p className="text-sm mt-4">
-                      This platform is for non-emergency reporting
-                    </p>
-                  </div>
+                  
                 </div>
               </div>
             </div>

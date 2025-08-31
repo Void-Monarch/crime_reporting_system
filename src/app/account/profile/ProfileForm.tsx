@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -31,6 +32,7 @@ import {
 
 const profileFormSchema = z.object({
   id: z.string().min(1, "ID is required"),
+  aadhaarNumber: z.string().min(1, "Addhar Number is required"),
   image: z.string().min(1, "Image is required"),
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
@@ -47,6 +49,7 @@ export type UpUser = User & {
   state?: string;
   postalCode?: string;
   city?: string;
+  aadhaarNumber?: string;
 };
 
 export default function ProfileForm({ user }: { user: UpUser }) {
@@ -55,6 +58,7 @@ export default function ProfileForm({ user }: { user: UpUser }) {
   // Default values for the form
   const defaultValues: ProfileFormValues = {
     id: user.id!,
+    aadhaarNumber: user.aadhaarNumber || "",
     image: user.image!,
     name: user.name!,
     email: user.email!,
@@ -78,8 +82,10 @@ export default function ProfileForm({ user }: { user: UpUser }) {
       // @ts-ignore
       const result = await updateUserForm(data);
       console.log(result);
+      toast.success("Profile updated successfully!");
     } catch (error) {
       console.error("Error in form submission:", error);
+      toast.error("Failed to update profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -112,6 +118,26 @@ export default function ProfileForm({ user }: { user: UpUser }) {
                       </FormControl>
                       <FormDescription>
                         Your unique user identifier (cannot be changed)
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              {/* Addhar Number field */}
+              <div className="w-full">
+                <FormField
+                  control={form.control}
+                  name="aadhaarNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Aadhaar Number</FormLabel>
+                      <FormControl>
+                        <Input {...field} disabled={!!user.aadhaarNumber} />
+                      </FormControl>
+                      <FormDescription>
+                        Your unique Aadhaar identifier (cannot be changed once
+                        Verified)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
