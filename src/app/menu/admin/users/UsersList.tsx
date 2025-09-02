@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   Search,
   Filter,
@@ -256,16 +256,29 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
                       </div>
 
                       <div className="pt-2">
-                        <Link href={`/menu/admin/users/${user.id}`}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                          >
-                            <Eye className="w-3 h-3 mr-1" />
-                            View Details
-                          </Button>
-                        </Link>
+                        <Suspense
+                          fallback={
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full"
+                              disabled
+                            >
+                              <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+                            </Button>
+                          }
+                        >
+                          <Link href={`/menu/admin/users/${user.id}`}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full"
+                            >
+                              <Eye className="w-3 h-3 mr-1" />
+                              View Details
+                            </Button>
+                          </Link>
+                        </Suspense>
                       </div>
                     </CardContent>
                   </Card>

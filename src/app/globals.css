@@ -20,6 +20,39 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Leaflet map styles to ensure proper display */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+.leaflet-popup-content {
+  margin: 8px 12px;
+  line-height: 1.4;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.leaflet-control-zoom a {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ccc;
+  color: #333;
+  text-decoration: none;
+  display: block;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f4f4f4;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -111,19 +144,25 @@ body {
 .loader {
   height: 4px;
   width: 130px;
-  --c:no-repeat linear-gradient(#6100ee 0 0);
-  background: var(--c),var(--c),#d7b8fc;
+  --c: no-repeat linear-gradient(#6100ee 0 0);
+  background: var(--c), var(--c), #d7b8fc;
   background-size: 60% 100%;
   animation: l16 3s infinite;
 }
 @keyframes l16 {
-  0%   {background-position:-150% 0,-150% 0}
-  66%  {background-position: 250% 0,-150% 0}
-  100% {background-position: 250% 0, 250% 0}
+  0% {
+    background-position: -150% 0, -150% 0;
+  }
+  66% {
+    background-position: 250% 0, -150% 0;
+  }
+  100% {
+    background-position: 250% 0, 250% 0;
+  }
 }
 
-#homeBG{
-  background-image: url('../../public/Gemini_Generated_1.png');
+#homeBG {
+  background-image: url("../../public/Gemini_Generated_1.png");
   background-size: cover;
   background-repeat: no-repeat;
 }

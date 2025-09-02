@@ -46,13 +46,9 @@ export default function ReportsDashboard({
   const [searchQuery, setSearchQuery] = useState("");
   const [currentFilter, setCurrentFilter] = useState("all");
 
-  async function fetchReports() {
-    setReports(fetchedReports);
-  }
-
   useEffect(() => {
-    fetchReports();
-  }, []);
+    setReports(fetchedReports);
+  }, [fetchedReports]);
 
   // Filter reports based on search query and status filter
   const filteredReports = reports.filter((report) => {
@@ -234,41 +230,43 @@ export default function ReportsDashboard({
                 {filteredReports
                   .filter((report) => report.status === "SUBMITTED")
                   .map((report) => (
-                    <Card
+                    <Link
                       key={report.id}
-                      className="border-l-4 border-l-blue-500"
+                      href={`/menu/complaints/${report.id}`}
                     >
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-base">
-                            {report.title}
-                          </CardTitle>
-                        </div>
-                        <CardDescription className="line-clamp-2 mt-1">
-                          {report.description.slice(0, 40)}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                      <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
-                          <div>{report.id}</div>
-                          <div>
-                            {new Date(report.createdAt).toLocaleDateString()}
+                      <Card className="border-l-4 border-l-blue-500 hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="p-4 pb-2">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">
+                              {report.title}
+                            </CardTitle>
                           </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                        {getPriorityBadge(report.priority)}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {report.reportType}
-                          </span>
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={reportSVG} alt="" />
-                            <AvatarFallback></AvatarFallback>
-                          </Avatar>
-                        </div>
-                      </CardFooter>
-                    </Card>
+                          <CardDescription className="line-clamp-2 mt-1">
+                            {report.description.slice(0, 40)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <div>{report.id}</div>
+                            <div>
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                          {getPriorityBadge(report.priority)}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {report.reportType}
+                            </span>
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={reportSVG} alt="" />
+                              <AvatarFallback></AvatarFallback>
+                            </Avatar>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Link>
                   ))}
               </div>
 
@@ -290,41 +288,43 @@ export default function ReportsDashboard({
                 {filteredReports
                   .filter((report) => report.status === "UNDER_REVIEW")
                   .map((report) => (
-                    <Card
+                    <Link
                       key={report.id}
-                      className="border-l-4 border-l-purple-500"
+                      href={`/menu/complaints/${report.id}`}
                     >
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-base">
-                            {report.title}
-                          </CardTitle>
-                        </div>
-                        <CardDescription className="line-clamp-2 mt-1">
-                          {report.description.slice(0, 40)}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                        <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
-                          <div>{report.id}</div>
-                          <div>
-                            {new Date(report.createdAt).toLocaleDateString()}
+                      <Card className="border-l-4 border-l-purple-500 hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="p-4 pb-2">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">
+                              {report.title}
+                            </CardTitle>
                           </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                        {getPriorityBadge(report.priority)}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {report.reportType}
-                          </span>
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={reportSVG} alt="" />
-                            <AvatarFallback></AvatarFallback>
-                          </Avatar>
-                        </div>
-                      </CardFooter>
-                    </Card>
+                          <CardDescription className="line-clamp-2 mt-1">
+                            {report.description.slice(0, 40)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <div>{report.id}</div>
+                            <div>
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                          {getPriorityBadge(report.priority)}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {report.reportType}
+                            </span>
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={reportSVG} alt="" />
+                              <AvatarFallback></AvatarFallback>
+                            </Avatar>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Link>
                   ))}
               </div>
 
@@ -346,42 +346,43 @@ export default function ReportsDashboard({
                 {filteredReports
                   .filter((report) => report.status === "INVESTIGATING")
                   .map((report) => (
-                    <Card
+                    <Link
                       key={report.id}
-                      className="border-l-4 border-l-amber-500"
+                      href={`/menu/complaints/${report.id}`}
                     >
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-base">
-                            {report.title}
-                          </CardTitle>
-                        </div>
-                        <CardDescription className="line-clamp-2 mt-1">
-                          {report.description.slice(0, 40)}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                        <div className="flex  items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                          <div>{report.id}</div>
-                          <br />
-                          <div>
-                            {new Date(report.createdAt).toLocaleDateString()}
+                      <Card className="border-l-4 border-l-amber-500 hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="p-4 pb-2">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">
+                              {report.title}
+                            </CardTitle>
                           </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                        {getPriorityBadge(report.priority)}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {report.reportType}
-                          </span>
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={reportSVG} alt="" />
-                            <AvatarFallback></AvatarFallback>
-                          </Avatar>
-                        </div>
-                      </CardFooter>
-                    </Card>
+                          <CardDescription className="line-clamp-2 mt-1">
+                            {report.description.slice(0, 40)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="flex flex-col items-start justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <div>{report.id}</div>
+                            <div>
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                          {getPriorityBadge(report.priority)}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {report.reportType}
+                            </span>
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={reportSVG} alt="" />
+                              <AvatarFallback></AvatarFallback>
+                            </Avatar>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Link>
                   ))}
               </div>
 
@@ -402,41 +403,43 @@ export default function ReportsDashboard({
                 {filteredReports
                   .filter((report) => report.status === "RESOLVED")
                   .map((report) => (
-                    <Card
+                    <Link
                       key={report.id}
-                      className="border-l-4 border-l-green-500"
+                      href={`/menu/complaints/${report.id}`}
                     >
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-base">
-                            {report.title}
-                          </CardTitle>
-                        </div>
-                        <CardDescription className="line-clamp-2 mt-1">
-                          {report.description.slice(0, 40)}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                      <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
-                          <div>{report.id}</div>
-                          <div>
-                            {new Date(report.createdAt).toLocaleDateString()}
+                      <Card className="border-l-4 border-l-green-500 hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="p-4 pb-2">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">
+                              {report.title}
+                            </CardTitle>
                           </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                        {getPriorityBadge(report.priority)}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {report.reportType}
-                          </span>
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={reportSVG} alt="" />
-                            <AvatarFallback></AvatarFallback>
-                          </Avatar>
-                        </div>
-                      </CardFooter>
-                    </Card>
+                          <CardDescription className="line-clamp-2 mt-1">
+                            {report.description.slice(0, 40)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <div>{report.id}</div>
+                            <div>
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                          {getPriorityBadge(report.priority)}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {report.reportType}
+                            </span>
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={reportSVG} alt="" />
+                              <AvatarFallback></AvatarFallback>
+                            </Avatar>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Link>
                   ))}
               </div>
 
@@ -457,41 +460,43 @@ export default function ReportsDashboard({
                 {filteredReports
                   .filter((report) => report.status === "CLOSED")
                   .map((report) => (
-                    <Card
+                    <Link
                       key={report.id}
-                      className="border-l-4 border-l-gray-500"
+                      href={`/menu/complaints/${report.id}`}
                     >
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-base">
-                            {report.title}
-                          </CardTitle>
-                        </div>
-                        <CardDescription className="line-clamp-2 mt-1">
-                          {report.description.slice(0, 40)}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                      <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
-                          <div>{report.id}</div>
-                          <div>
-                            {new Date(report.createdAt).toLocaleDateString()}
+                      <Card className="border-l-4 border-l-gray-500 hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="p-4 pb-2">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">
+                              {report.title}
+                            </CardTitle>
                           </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                        {getPriorityBadge(report.priority)}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {report.reportType}
-                          </span>
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={reportSVG} alt="" />
-                            <AvatarFallback></AvatarFallback>
-                          </Avatar>
-                        </div>
-                      </CardFooter>
-                    </Card>
+                          <CardDescription className="line-clamp-2 mt-1">
+                            {report.description.slice(0, 40)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <div>{report.id}</div>
+                            <div>
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                          {getPriorityBadge(report.priority)}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {report.reportType}
+                            </span>
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={reportSVG} alt="" />
+                              <AvatarFallback></AvatarFallback>
+                            </Avatar>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Link>
                   ))}
               </div>
 
@@ -512,41 +517,43 @@ export default function ReportsDashboard({
                 {filteredReports
                   .filter((report) => report.status === "REJECTED")
                   .map((report) => (
-                    <Card
+                    <Link
                       key={report.id}
-                      className="border-l-4 border-l-red-500"
+                      href={`/menu/complaints/${report.id}`}
                     >
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex justify-between items-start">
-                          <CardTitle className="text-base">
-                            {report.title}
-                          </CardTitle>
-                        </div>
-                        <CardDescription className="line-clamp-2 mt-1">
-                          {report.description.slice(0, 40)}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-0">
-                      <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
-                          <div>{report.id}</div>
-                          <div>
-                            {new Date(report.createdAt).toLocaleDateString()}
+                      <Card className="border-l-4 border-l-red-500 hover:shadow-md transition-shadow cursor-pointer">
+                        <CardHeader className="p-4 pb-2">
+                          <div className="flex justify-between items-start">
+                            <CardTitle className="text-base">
+                              {report.title}
+                            </CardTitle>
                           </div>
-                        </div>
-                      </CardContent>
-                      <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                        {getPriorityBadge(report.priority)}
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-gray-500 dark:text-gray-400">
-                            {report.reportType}
-                          </span>
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={reportSVG} alt="" />
-                            <AvatarFallback></AvatarFallback>
-                          </Avatar>
-                        </div>
-                      </CardFooter>
-                    </Card>
+                          <CardDescription className="line-clamp-2 mt-1">
+                            {report.description.slice(0, 40)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="flex flex-col  items-start justify-between text-sm text-gray-500 dark:text-gray-400">
+                            <div>{report.id}</div>
+                            <div>
+                              {new Date(report.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
+                        </CardContent>
+                        <CardFooter className="p-4 pt-0 flex justify-between items-center">
+                          {getPriorityBadge(report.priority)}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                              {report.reportType}
+                            </span>
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={reportSVG} alt="" />
+                              <AvatarFallback></AvatarFallback>
+                            </Avatar>
+                          </div>
+                        </CardFooter>
+                      </Card>
+                    </Link>
                   ))}
               </div>
             </div>

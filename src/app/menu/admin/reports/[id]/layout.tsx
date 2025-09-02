@@ -10,7 +10,7 @@ export default async function ReportDetailLayout({
   const session = await auth();
   if (!session) redirect("/account/login");
   const user: UpUser = session.user!;
-  if (user.role !== "admin") redirect("/menu");
+  if (user.role !== "ADMIN") redirect("/dashboard");
 
   return <>{children}</>;
 }

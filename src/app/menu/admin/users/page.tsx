@@ -5,6 +5,8 @@ import { getAllUsers } from "@/lib/data_queries";
 import UsersList from "./UsersList";
 import { Suspense } from "react";
 
+import Loader from "../../../../components/custom/Loaders/MainLoader";
+
 export default async function Page() {
   const session = await auth();
   if (!session) redirect("/account/login");
@@ -12,7 +14,23 @@ export default async function Page() {
   if (user.role !== "ADMIN") redirect("/menu");
   const allUsers = await getAllUsers();
   return (
-    <Suspense>
+    <Suspense
+      fallback={
+        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+          <header className="sticky top-0 z-10 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
+            <div className="container flex items-center justify-between h-16 px-4 md:px-6">
+              <h1 className="text-xl font-bold">Users Management</h1>
+              <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </header>
+          <main className="flex-1 container px-4 py-6 md:px-6 md:py-8">
+            <div className="flex items-center justify-center h-64">
+              <Loader />
+            </div>
+          </main>
+        </div>
+      }
+    >
       <UsersList users={allUsers} />
     </Suspense>
   );

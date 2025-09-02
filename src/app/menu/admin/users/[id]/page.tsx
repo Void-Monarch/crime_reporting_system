@@ -4,6 +4,7 @@ import { UpUser } from "../../../../account/profile/ProfileForm";
 import { getUserById, getReportByUserId } from "@/lib/data_queries";
 import UserDetailView from "./UserDetailView";
 import { Suspense } from "react";
+import MainLoader from "@/components/custom/Loaders/MainLoader";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -27,7 +28,7 @@ export default async function UserDetailPage({ params }: Props) {
   const userReports = await getReportByUserId(id);
 
   return (
-    <Suspense>
+    <Suspense fallback={<MainLoader />}>
       <UserDetailView
         user={user}
         currentUser={currentUser}

@@ -1,8 +1,8 @@
-// @ts-nocheck
 "use server";
 
 import { z } from "zod";
-import { createReport } from "@/lib/data_queries";
+import { prisma } from "@/prisma/prisma";
+import { ReportType, Priority } from "@prisma/client";
 
 const crimeReportSchema = z.object({
     // Reporter information
@@ -74,7 +74,7 @@ export async function submitCrimeReport(userid: string, formData: CrimeReportTyp
         } = validatedData;
 
 
-        const formatedData = {
+        const reportData = {
             title: incidentTitle,
             description: incidentDescription,
             location: {
@@ -84,48 +84,22 @@ export async function submitCrimeReport(userid: string, formData: CrimeReportTyp
                 address: incidentLocationAddress,
                 coordinates: {
                     coordinates: [Number?.parseFloat(latitude!), Number?.parseFloat(longitude!)]
-
                 }
             },
-            reportType: crimeType,
-            priority: severity,
+            reportType: crimeType as ReportType,
+            priority: severity as Priority,
             incidentDate: incidentDate,
             incidentTime: incidentTime,
             witnesses: witnessDetails,
             suspects: suspectDescription,
             evidence: evidenceDescription,
+            reporterId: anonymous ? null : userid,
             anonymous: anonymous,
         };
 
-        const formatedDataWithID = {
-            title: incidentTitle,
-            description: incidentDescription,
-            location: {
-                state: incidentLocationState,
-                city: incidentLocationCity,
-                postalCode: incidentLocationPostalCode,
-                address: incidentLocationAddress,
-                coordinates: {
-                    coordinates: [Number?.parseFloat(latitude!), Number?.parseFloat(longitude!)]
-                }
-            },
-            reportType: crimeType,
-            priority: severity,
-            incidentDate: incidentDate,
-            incidentTime: incidentTime,
-            witnesses: witnessDetails,
-            suspects: suspectDescription,
-            evidence: evidenceDescription,
-            reporterId: userid,
-            anonymous: anonymous,
-        }
-
-        let report;
-        if (anonymous) {
-            report = await createReport(formatedData);
-        } else {
-            report = await createReport(formatedDataWithID);
-        }
+        const report = await prisma.report.create({
+            data: reportData
+        });
 
 
         // 2. Send notifications if necessary
@@ -142,6 +116,92 @@ export async function submitCrimeReport(userid: string, formData: CrimeReportTyp
         return {
             success: false,
             message: error instanceof Error ? error.message : "Failed to submit report",
+        };
+    }
+}
+
+// Get report by ID for user (only their own reports)
+export async function getReportByIdForUser(reportId: string, userId: string) {
+    try {
+        const report = await prisma.report.findFirst({
+            where: {
+                id: reportId,
+                reporterId: userId
+            },
+            include: {
+                reporter: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        phone: true
+                    }
+                },
+                comments: {
+                    include: {
+                        user: {
+                            select: {
+                                name: true,
+                                email: true
+                            }
+                        }
+                    },
+                    orderBy: {
+                        createdAt: 'desc'
+                    }
+                },
+                mediaAttachments: true
+            }
+        });
+
+        return report;
+    } catch (error) {
+        console.error("Error fetching report:", error);
+        return null;
+    }
+}
+
+// Withdraw report (set status to REJECTED)
+export async function withdrawReport(reportId: string, userId: string) {
+    try {
+        // First check if the user owns this report and it's not already closed/resolved/rejected
+        const report = await prisma.report.findFirst({
+            where: {
+                id: reportId,
+                reporterId: userId,
+                status: {
+                    notIn: ['RESOLVED', 'CLOSED', 'REJECTED']
+                }
+            }
+        });
+
+        if (!report) {
+            return {
+                success: false,
+                error: "Report not found or cannot be withdrawn"
+            };
+        }
+
+        // Update the report status to REJECTED
+        await prisma.report.update({
+            where: {
+                id: reportId
+            },
+            data: {
+                status: 'REJECTED',
+                updatedAt: new Date()
+            }
+        });
+
+        return {
+            success: true,
+            message: "Report withdrawn successfully"
+        };
+    } catch (error) {
+        console.error("Error withdrawing report:", error);
+        return {
+            success: false,
+            error: "Failed to withdraw report"
         };
     }
 }

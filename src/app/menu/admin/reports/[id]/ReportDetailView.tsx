@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import {
   Card,
   CardContent,
@@ -32,6 +32,8 @@ import {
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { updateReportByAdmin } from "@/server_action/admin/actions";
+import MiniMap from "@/components/custom/MiniMap";
+import Link from "next/link";
 
 type Report = {
   id: string;
@@ -234,6 +236,7 @@ export default function ReportDetailView({
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Report Details</h1>
@@ -292,7 +295,7 @@ export default function ReportDetailView({
                   <p className="mt-1 font-medium">{report.title}</p>
                 )}
               </div>
-
+              <hr className="my-2" />
               <div>
                 <Label htmlFor="description">Description</Label>
                 {isEditing ? (
@@ -308,6 +311,7 @@ export default function ReportDetailView({
                   <p className="mt-1 text-gray-700">{report.description}</p>
                 )}
               </div>
+              <hr className="my-3" />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -465,6 +469,25 @@ export default function ReportDetailView({
                           Enter longitude and latitude coordinates for precise
                           location
                         </p>
+                        {formData.location.coordinates?.coordinates[0] &&
+                          formData.location.coordinates?.coordinates[1] && (
+                            <div className="mt-2">
+                              <p className="text-xs text-gray-600 mb-1">
+                                Preview Location:
+                              </p>
+                              <MiniMap
+                                latitude={
+                                  formData.location.coordinates.coordinates[1]
+                                }
+                                longitude={
+                                  formData.location.coordinates.coordinates[0]
+                                }
+                                title="Report Location"
+                                size="small"
+                                zoom={16}
+                              />
+                            </div>
+                          )}
                       </div>
                     </div>
                   ) : (
@@ -474,11 +497,31 @@ export default function ReportDetailView({
                         {formatLocation(report.location)}
                       </p>
                       {report.location.coordinates && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          Coordinates:{" "}
-                          {report.location.coordinates.coordinates[1]},{" "}
-                          {report.location.coordinates.coordinates[0]}
-                        </p>
+                        <>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Coordinates:{" "}
+                            {report.location.coordinates.coordinates[1]},{" "}
+                            {report.location.coordinates.coordinates[0]}
+                          </p>
+                          <div className="mt-2">
+                            <p className="text-xs text-gray-600 mb-1">
+                              Location on Map:
+                            </p>
+                            <div className="border rounded-md overflow-hidden">
+                              <MiniMap
+                                latitude={
+                                  report.location.coordinates.coordinates[1]
+                                }
+                                longitude={
+                                  report.location.coordinates.coordinates[0]
+                                }
+                                title={report.title}
+                                size="medium"
+                                zoom={16}
+                              />
+                            </div>
+                          </div>
+                        </>
                       )}
                     </div>
                   )}
@@ -613,9 +656,30 @@ export default function ReportDetailView({
                 <>
                   <div>
                     <Label className="text-sm font-medium">Name</Label>
-                    <p className="text-sm">
-                      {report.reporter.name || "Unknown"}
-                    </p>
+                    <div className="mt-1">
+                      <Suspense
+                        fallback={
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-sm"
+                            disabled
+                          >
+                            <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+                          </Button>
+                        }
+                      >
+                        <Link href={`/menu/admin/users/${report.reporter.id}`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-sm bg-green-300"
+                          >
+                            {report.reporter.name || "Unknown"}
+                          </Button>
+                        </Link>
+                      </Suspense>
+                    </div>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Email</Label>

@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { User as PrismaUser, Report } from "@prisma/client";
 import { UpUser } from "../../../../account/profile/ProfileForm";
 import {
@@ -237,12 +237,21 @@ export default function UserDetailView({
       <header className="sticky top-0 z-10 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
         <div className="container flex items-center justify-between h-16 px-4 md:px-6">
           <div className="flex items-center gap-4">
-            <Link href="/menu/admin/users">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-                <span className="sr-only">Back to users</span>
-              </Button>
-            </Link>
+            <Suspense
+              fallback={
+                <Button variant="ghost" size="icon" disabled>
+                  <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+                  <span className="sr-only">Loading...</span>
+                </Button>
+              }
+            >
+              <Link href="/menu/admin/users">
+                <Button variant="ghost" size="icon">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="sr-only">Back to users</span>
+                </Button>
+              </Link>
+            </Suspense>
             <h1 className="text-xl font-bold">User Details</h1>
           </div>
           <div className="flex items-center gap-2">
