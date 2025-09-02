@@ -1,10 +1,7 @@
-// @ts-nocheck
-
 "use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { updateUser } from "../../lib/data_queries";
-
+import { prisma } from "../../prisma/prisma";
 
 const updateUserSchema = z.object({
     id: z.string(),
@@ -16,19 +13,24 @@ const updateUserSchema = z.object({
     postalCode: z.string().optional(),
 });
 
-export async function updateUserForm(formData: FormData) {
+export type UpdateUserFormType = z.infer<typeof updateUserSchema>;
+
+export async function updateUserForm(formData: UpdateUserFormType) {
     try {
         // Validate data
         const validatedData = updateUserSchema.parse(formData);
-        const { id, name, phone, state, city, postalCode, aadhaarNumber } = validatedData;
-        const data = { name, phone, state, city, postalCode, aadhaarNumber };
+        const { id, ...updateData } = validatedData;
 
-
-
+        // Filter out undefined values to avoid overwriting with undefined
+        const filteredData = Object.fromEntries(
+            Object.entries(updateData).filter(([, value]) => value !== undefined)
+        );
 
         // Update user in database
-        const result = await updateUser(id, data);
-
+        const result = await prisma.user.update({
+            where: { id },
+            data: filteredData,
+        });
 
         // Revalidate the users page
         revalidatePath("/account/profile");

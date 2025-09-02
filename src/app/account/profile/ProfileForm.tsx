@@ -48,6 +48,7 @@ export type UpUser = User & {
   phone?: string;
   state?: string;
   postalCode?: string;
+  role?: string;
   city?: string;
   aadhaarNumber?: string;
 };

@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import React from "react";
+import { UpUser } from "./account/profile/ProfileForm";
+
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import {
@@ -60,7 +62,7 @@ export default async function RootLayout({
             <span className="sr-only">CRS</span>
           </Link>
 
-          <NavMenu />
+          <NavMenu user={session?.user} />
 
           {/* <Sheet>
             <SheetTrigger asChild>
@@ -189,7 +191,7 @@ export default async function RootLayout({
   );
 }
 
-function NavMenu() {
+function NavMenu({ user }: { user: UpUser | undefined }) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -247,6 +249,29 @@ function NavMenu() {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
+
+        {/* Item three */}
+
+        {user?.role === "ADMIN" && (
+          <NavigationMenuItem>
+            <NavigationMenuTrigger className="hover:underline hover:underline-offset-4">
+              Admin Menu
+            </NavigationMenuTrigger>
+            <NavigationMenuContent className="bg-amber-300">
+              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                {components2.map((component) => (
+                  <ListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                  >
+                    {component.description}
+                  </ListItem>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        )}
       </NavigationMenuList>
     </NavigationMenu>
   );
@@ -287,6 +312,19 @@ const components: { title: string; href: string; description: string }[] = [
   {
     title: "View All Complaints",
     href: "/menu/complaints",
+    description: "Review and manage all submitted complaints",
+  },
+];
+
+const components2: { title: string; href: string; description: string }[] = [
+  {
+    title: "All Users",
+    href: "/menu/admin/users",
+    description: "Manage all users in the system",
+  },
+  {
+    title: "View All Complaints",
+    href: "/menu/admin/reports",
     description: "Review and manage all submitted complaints",
   },
 ];
