@@ -2,12 +2,13 @@ import { getReportById } from "@/lib/data_queries";
 import { notFound } from "next/navigation";
 import ReportDetailView from "./ReportDetailView";
 
-export default async function ReportDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const report = await getReportById(params.id);
+interface Props {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ReportDetailPage({ params }: Props) {
+  const { id } = await params;
+  const report = await getReportById(id);
 
   if (!report) {
     notFound();
