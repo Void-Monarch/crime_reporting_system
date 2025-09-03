@@ -123,6 +123,7 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
     evidence: false,
   });
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [submissionResult, setSubmissionResult] = useState<{
     success: boolean;
     message: string;
@@ -153,8 +154,8 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
       evidenceDescription: "",
       consent: false,
       currentLocation: false,
-      latitude: "0",
-      longitude: "0",
+      latitude: "",
+      longitude: "",
     },
   });
 
@@ -163,28 +164,61 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
     const subscription = form.watch((value, { name }) => {
       if (name === "currentLocation" && value.currentLocation) {
         setLocationError(null);
+        setIsGettingLocation(true);
+
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             (position) => {
+              // Store coordinates as strings for form compatibility
               form.setValue("latitude", position.coords.latitude.toString());
               form.setValue("longitude", position.coords.longitude.toString());
+              setIsGettingLocation(false);
               toast.success("Location obtained successfully.");
             },
             (error) => {
               console.error("Error getting location", error);
-              setLocationError(
-                "Unable to get your current location. Please check your browser permissions."
-              );
+              let errorMessage = "Unable to get your current location.";
+
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  errorMessage =
+                    "Location access denied. Please enable location permissions in your browser.";
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  errorMessage = "Location information is unavailable.";
+                  break;
+                case error.TIMEOUT:
+                  errorMessage =
+                    "Location request timed out. Please try again.";
+                  break;
+                default:
+                  errorMessage =
+                    "An unknown error occurred while retrieving location.";
+                  break;
+              }
+
+              setLocationError(errorMessage);
+              setIsGettingLocation(false);
               form.setValue("currentLocation", false);
+              toast.error(errorMessage);
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 300000, // 5 minutes
             }
           );
         } else {
           setLocationError("Geolocation is not supported by your browser");
+          setIsGettingLocation(false);
           form.setValue("currentLocation", false);
+          toast.error("Geolocation is not supported by your browser");
         }
       } else if (name === "currentLocation" && !value.currentLocation) {
         form.setValue("latitude", "");
         form.setValue("longitude", "");
+        setIsGettingLocation(false);
+        setLocationError(null);
         toast.info("Location sharing disabled.");
       }
     });
@@ -617,21 +651,38 @@ export default function CrimeReportForm({ user }: { user: UpUser }) {
                             <Checkbox
                               checked={field.value}
                               onCheckedChange={field.onChange}
+                              disabled={isGettingLocation}
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>
-                              Do you want to share your current location?
+                              {isGettingLocation
+                                ? "Getting your location..."
+                                : "Do you want to share your current location?"}
                             </FormLabel>
                             <FormDescription>
-                              Check this box if you want to share your current
-                              location.
+                              {isGettingLocation
+                                ? "Please wait while we fetch your location..."
+                                : "Check this box if you want to share your current location."}
                             </FormDescription>
                             {locationError && (
                               <p className="text-sm text-red-500 mt-1">
                                 {locationError}
                               </p>
                             )}
+                            {form.watch("latitude") &&
+                              form.watch("longitude") &&
+                              !locationError && (
+                                <div className="text-sm text-green-600 mt-1">
+                                  <p>✓ Location captured successfully</p>
+                                  {process.env.NODE_ENV === "development" && (
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      Debug: Lat: {form.watch("latitude")}, Lng:{" "}
+                                      {form.watch("longitude")}
+                                    </p>
+                                  )}
+                                </div>
+                              )}
                           </div>
                         </FormItem>
                       )}

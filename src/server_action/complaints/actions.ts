@@ -82,9 +82,9 @@ export async function submitCrimeReport(userid: string, formData: CrimeReportTyp
                 city: incidentLocationCity,
                 postalCode: incidentLocationPostalCode,
                 address: incidentLocationAddress,
-                coordinates: {
-                    coordinates: [Number?.parseFloat(latitude!), Number?.parseFloat(longitude!)]
-                }
+                coordinates: latitude && longitude ? {
+                    coordinates: [Number?.parseFloat(longitude!), Number?.parseFloat(latitude!)] // GeoJSON format: [longitude, latitude]
+                } : undefined
             },
             reportType: crimeType as ReportType,
             priority: severity as Priority,

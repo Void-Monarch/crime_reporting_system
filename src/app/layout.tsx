@@ -29,7 +29,6 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 import { auth, signOut } from "../lib/auth";
-import { toast } from "sonner";
 
 export const metadata: Metadata = {
   title: "CRS",
@@ -170,7 +169,6 @@ export default async function RootLayout({
                     action={async () => {
                       "use server";
                       await signOut();
-                      toast.success("Signed out successfully");
                     }}
                   >
                     <button type="submit" className="w-full">
