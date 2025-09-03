@@ -532,7 +532,7 @@ export default function ReportDetailView({
                                   formData.location.coordinates.coordinates[0]
                                 }
                                 title="Report Location"
-                                size="small"
+                                size="medium"
                                 zoom={16}
                               />
                             </div>
