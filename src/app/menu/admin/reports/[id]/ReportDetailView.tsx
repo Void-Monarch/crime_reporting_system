@@ -28,12 +28,18 @@ import {
   ClockIcon,
   MessageSquareIcon,
   ImageIcon,
+  SendIcon,
+  LoaderIcon,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { updateReportByAdmin } from "@/server_action/admin/actions";
+import {
+  updateReportByAdmin,
+  addCommentToReport,
+} from "@/server_action/admin/actions";
 import MiniMap from "@/components/custom/MiniMap";
 import Link from "next/link";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Report = {
   id: string;
@@ -83,9 +89,11 @@ type Report = {
     id: string;
     content: string;
     createdAt: Date;
+    isInternal: boolean;
     user: {
       name: string | null;
       email: string | null;
+      role: string;
     };
   }[];
   mediaAttachments: {
@@ -99,14 +107,19 @@ type Report = {
 
 interface ReportDetailViewProps {
   report: Report;
+  currentUserId: string;
 }
 
 export default function ReportDetailView({
   report: initialReport,
+  currentUserId,
 }: ReportDetailViewProps) {
   const [report, setReport] = useState(initialReport);
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [commentContent, setCommentContent] = useState("");
+  const [isInternalComment, setIsInternalComment] = useState(false);
+  const [isAddingComment, setIsAddingComment] = useState(false);
   const [formData, setFormData] = useState({
     title: report.title,
     description: report.description,
@@ -214,6 +227,42 @@ export default function ReportDetailView({
       },
     });
     setIsEditing(false);
+  };
+
+  const handleAddComment = async () => {
+    if (!commentContent.trim()) {
+      toast.error("Please enter a comment");
+      return;
+    }
+
+    setIsAddingComment(true);
+    try {
+      const result = await addCommentToReport(currentUserId, {
+        reportId: report.id,
+        content: commentContent,
+        isInternal: isInternalComment,
+      });
+
+      if (result.success && result.comment) {
+        // Add the new comment to the report state
+        setReport((prev) => ({
+          ...prev,
+          comments: [result.comment, ...prev.comments],
+        }));
+        setCommentContent("");
+        setIsInternalComment(false);
+        toast.success("Comment added successfully");
+      } else {
+        const errorMessage = Array.isArray(result.error)
+          ? result.error.map((e) => e.message).join(", ")
+          : result.error || "Failed to add comment";
+        toast.error(errorMessage);
+      }
+    } catch {
+      toast.error("Failed to add comment");
+    } finally {
+      setIsAddingComment(false);
+    }
   };
 
   const statusBadge = getStatusBadge(
@@ -708,7 +757,53 @@ export default function ReportDetailView({
                 Comments ({report.comments.length})
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              {/* Add Comment Form */}
+              <div className="border-b pb-4">
+                <div className="space-y-3">
+                  <Label htmlFor="comment">Add Comment</Label>
+                  <Textarea
+                    id="comment"
+                    placeholder="Write your comment here..."
+                    value={commentContent}
+                    onChange={(e) => setCommentContent(e.target.value)}
+                    rows={3}
+                  />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="internal"
+                        checked={isInternalComment}
+                        onCheckedChange={(checked) =>
+                          setIsInternalComment(!!checked)
+                        }
+                      />
+                      <Label htmlFor="internal" className="text-sm">
+                        Internal comment (only visible to staff)
+                      </Label>
+                    </div>
+                    <Button
+                      onClick={handleAddComment}
+                      disabled={isAddingComment || !commentContent.trim()}
+                      size="sm"
+                    >
+                      {isAddingComment ? (
+                        <>
+                          <LoaderIcon className="w-4 h-4 mr-2 animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        <>
+                          <SendIcon className="w-4 h-4 mr-2" />
+                          Add Comment
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Comments List */}
               {report.comments.length === 0 ? (
                 <p className="text-sm text-gray-500">No comments yet</p>
               ) : (
@@ -716,13 +811,27 @@ export default function ReportDetailView({
                   {report.comments.map((comment: Report["comments"][0]) => (
                     <div
                       key={comment.id}
-                      className="border-l-2 border-gray-200 pl-3"
+                      className={`border-l-2 pl-3 ${
+                        comment.isInternal
+                          ? "border-orange-300 bg-orange-50 p-3 rounded-r"
+                          : "border-gray-200"
+                      }`}
                     >
-                      <div className="text-sm font-medium">
-                        {comment.user.name || "Unknown User"}
-                      </div>
-                      <div className="text-xs text-gray-500 mb-1">
-                        {format(new Date(comment.createdAt), "PPp")}
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-sm font-medium flex items-center gap-2">
+                          {comment.user.name || "Unknown User"}
+                          <Badge variant="outline" className="text-xs">
+                            {comment.user.role.replace("_", " ")}
+                          </Badge>
+                          {comment.isInternal && (
+                            <Badge variant="secondary" className="text-xs">
+                              Internal
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {format(new Date(comment.createdAt), "PPp")}
+                        </div>
                       </div>
                       <div className="text-sm text-gray-700">
                         {comment.content}
