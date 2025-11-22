@@ -6,10 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import digilockericon from "../../../../public/digilocker logo.jpg";
 import { signIn } from "../../../lib/auth";
 
 import { SVGProps } from "react";
+import Image from "next/image";
 
 const GoogleIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
@@ -67,8 +68,12 @@ export default function Component() {
             className="bg-white text-black hover:bg-gray-50 border-gray-300"
             disabled
           >
-            <GitHubLogoIcon className="mr-2 h-5 w-5" />
-            Sign in with Github
+            <Image
+              src={digilockericon}
+              alt="Digilocker Logo"
+              className="mr-2 h-5 w-5"
+            />
+            Sign in with Digilocker
           </Button>
         </CardContent>
       </Card>
