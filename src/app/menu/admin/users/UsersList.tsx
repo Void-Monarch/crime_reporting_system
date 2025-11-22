@@ -65,7 +65,7 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
         return (
           <Badge
             variant="outline"
-            className="bg-red-50 text-red-700 border-red-200 flex items-center gap-1"
+            className="bg-red-50 text-red-700 border-red-200 flex items-center gap-1 transition-all duration-200 hover:bg-red-100 hover:scale-105"
           >
             <Shield className="w-3 h-3" /> Admin
           </Badge>
@@ -74,7 +74,7 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
         return (
           <Badge
             variant="outline"
-            className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1"
+            className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1 transition-all duration-200 hover:bg-blue-100 hover:scale-105"
           >
             <Shield className="w-3 h-3" /> Police Officer
           </Badge>
@@ -83,7 +83,7 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
         return (
           <Badge
             variant="outline"
-            className="bg-purple-50 text-purple-700 border-purple-200 flex items-center gap-1"
+            className="bg-purple-50 text-purple-700 border-purple-200 flex items-center gap-1 transition-all duration-200 hover:bg-purple-100 hover:scale-105"
           >
             <UserCheck className="w-3 h-3" /> Investigator
           </Badge>
@@ -92,13 +92,20 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1"
+            className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1 transition-all duration-200 hover:bg-green-100 hover:scale-105"
           >
             <User className="w-3 h-3" /> Citizen
           </Badge>
         );
       default:
-        return <Badge variant="outline">{role}</Badge>;
+        return (
+          <Badge
+            variant="outline"
+            className="transition-all duration-200 hover:scale-105"
+          >
+            {role}
+          </Badge>
+        );
     }
   };
 
@@ -106,21 +113,24 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
   const getVerificationBadge = (user: PrismaUser) => {
     if (user.aadhaarNumber && user.profileCompleted) {
       return (
-        <Badge className="bg-green-500 text-white">
+        <Badge className="bg-green-500 text-white transition-all duration-200 hover:bg-green-600 hover:scale-105">
           <UserCheck className="w-3 h-3 mr-1" />
           Verified
         </Badge>
       );
     } else if (user.aadhaarNumber) {
       return (
-        <Badge className="bg-yellow-500 text-white">
+        <Badge className="bg-yellow-500 text-white transition-all duration-200 hover:bg-yellow-600 hover:scale-105">
           <UserCheck className="w-3 h-3 mr-1" />
           Partial
         </Badge>
       );
     } else {
       return (
-        <Badge variant="outline" className="bg-gray-50 text-gray-700">
+        <Badge
+          variant="outline"
+          className="bg-gray-50 text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:scale-105"
+        >
           <User className="w-3 h-3 mr-1" />
           Unverified
         </Badge>
@@ -130,11 +140,14 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
-      <header className="sticky top-0 z-10 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
+      <header className="sticky top-0 z-10 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 animate-in fade-in slide-in-from-top-4 duration-500">
         <div className="container flex items-center justify-between h-16 px-4 md:px-6">
           <h1 className="text-xl font-bold">Users Management</h1>
           <div className="flex items-center gap-4">
-            <Badge variant="secondary" className="hidden md:flex">
+            <Badge
+              variant="secondary"
+              className="hidden md:flex transition-all duration-300 hover:scale-105"
+            >
               <Users className="w-4 h-4 mr-1" />
               {filteredUsers.length} Users
             </Badge>
@@ -142,21 +155,21 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
         </div>
       </header>
 
-      <main className="flex-1 container px-4 py-6 md:px-6 md:py-8">
+      <main className="flex-1 container px-4 py-6 md:px-6 md:py-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="flex items-center gap-4 w-full md:w-auto animate-in fade-in slide-in-from-left-4 duration-500">
             <div className="relative w-full md:w-[300px]">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400 transition-colors duration-200" />
               <Input
                 type="search"
                 placeholder="Search users..."
-                className="pl-8 w-full"
+                className="pl-8 w-full transition-all duration-200 focus:ring-2"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <Select value={currentFilter} onValueChange={setCurrentFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] transition-all duration-200 hover:border-gray-400">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -168,9 +181,9 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-2 w-full md:w-auto animate-in fade-in slide-in-from-right-4 duration-500">
             <Select defaultValue="newest">
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] transition-all duration-200 hover:border-gray-400">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -180,34 +193,49 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
                 <SelectItem value="role">Role</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" size="icon" className="shrink-0">
+            <Button
+              variant="outline"
+              size="icon"
+              className="shrink-0 transition-all duration-200 hover:scale-110 hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
               <Filter className="h-4 w-4" />
               <span className="sr-only">More filters</span>
             </Button>
           </div>
         </div>
 
-        <Tabs defaultValue="cards" className="mb-8">
-          <TabsList>
-            <TabsTrigger value="cards">Card View</TabsTrigger>
-            <TabsTrigger value="list">List View</TabsTrigger>
+        <Tabs
+          defaultValue="cards"
+          className="mb-8 animate-in fade-in duration-700 delay-150"
+        >
+          <TabsList className="transition-all duration-200">
+            <TabsTrigger value="cards" className="transition-all duration-200">
+              Card View
+            </TabsTrigger>
+            <TabsTrigger value="list" className="transition-all duration-200">
+              List View
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="cards" className="mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredUsers.length === 0 ? (
-                <div className="col-span-full p-8 text-center text-muted-foreground">
+                <div className="col-span-full p-8 text-center text-muted-foreground animate-in fade-in duration-500">
                   No users found matching your criteria
                 </div>
               ) : (
-                filteredUsers.map((user) => (
+                filteredUsers.map((user, index) => (
                   <Card
                     key={user.id}
-                    className="hover:shadow-md transition-shadow"
+                    className="hover:shadow-lg hover:scale-105 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
+                    style={{
+                      animationDelay: `${index * 50}ms`,
+                      animationFillMode: "backwards",
+                    }}
                   >
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-12 w-12">
+                        <Avatar className="h-12 w-12 transition-transform duration-200 hover:scale-110">
                           <AvatarImage
                             src={user.image || ""}
                             alt={user.name || "User"}
@@ -227,20 +255,20 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
                       </div>
                     </CardHeader>
                     <CardContent className="pt-2 space-y-2">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between animate-in fade-in duration-300 delay-100">
                         {getRoleBadge(user.role)}
                         {getVerificationBadge(user)}
                       </div>
 
                       {user.phone && (
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground animate-in fade-in slide-in-from-left-2 duration-300 delay-150">
                           <Phone className="w-3 h-3" />
                           <span className="truncate">{user.phone}</span>
                         </div>
                       )}
 
                       {user.city && user.state && (
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground animate-in fade-in slide-in-from-left-2 duration-300 delay-200">
                           <MapPin className="w-3 h-3" />
                           <span className="truncate">
                             {user.city}, {user.state}
@@ -248,14 +276,14 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
                         </div>
                       )}
 
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground animate-in fade-in slide-in-from-left-2 duration-300 delay-250">
                         <Calendar className="w-3 h-3" />
                         <span>
                           {new Date(user.createdAt).toLocaleDateString("en-GB")}
                         </span>
                       </div>
 
-                      <div className="pt-2">
+                      <div className="pt-2 animate-in fade-in duration-300 delay-300">
                         <Suspense
                           fallback={
                             <Button
@@ -272,9 +300,9 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="w-full"
+                              className="w-full transition-all duration-200 hover:bg-primary hover:text-primary-foreground group"
                             >
-                              <Eye className="w-3 h-3 mr-1" />
+                              <Eye className="w-3 h-3 mr-1 transition-transform duration-200 group-hover:scale-110" />
                               View Details
                             </Button>
                           </Link>
@@ -288,7 +316,7 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
           </TabsContent>
 
           <TabsContent value="list" className="mt-4">
-            <div className="rounded-lg border bg-card">
+            <div className="rounded-lg border bg-card animate-in fade-in duration-500">
               <div className="grid grid-cols-12 p-4 border-b font-medium text-sm">
                 <div className="col-span-3">User</div>
                 <div className="col-span-2">Role</div>
@@ -298,18 +326,22 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
                 <div className="col-span-1 text-right">Actions</div>
               </div>
               {filteredUsers.length === 0 ? (
-                <div className="p-8 text-center text-muted-foreground">
+                <div className="p-8 text-center text-muted-foreground animate-in fade-in duration-500">
                   No users found matching your criteria
                 </div>
               ) : (
-                filteredUsers.map((user) => (
+                filteredUsers.map((user, index) => (
                   <div
                     key={user.id}
-                    className="grid grid-cols-12 p-4 border-b items-center text-sm hover:bg-muted/50"
+                    className="grid grid-cols-12 p-4 border-b items-center text-sm hover:bg-muted/50 transition-all duration-200 animate-in fade-in slide-in-from-left-2"
+                    style={{
+                      animationDelay: `${index * 30}ms`,
+                      animationFillMode: "backwards",
+                    }}
                   >
                     <div className="col-span-3">
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
+                        <Avatar className="h-8 w-8 transition-transform duration-200 hover:scale-110">
                           <AvatarImage
                             src={user.image || ""}
                             alt={user.name || "User"}
@@ -346,8 +378,12 @@ export default function UsersList({ users }: { users: PrismaUser[] }) {
                     </div>
                     <div className="col-span-1 text-right">
                       <Link href={`/menu/admin/users/${user.id}`}>
-                        <Button variant="outline" size="sm">
-                          <Eye className="w-3 h-3" />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="transition-all duration-200 hover:scale-110 hover:bg-primary hover:text-primary-foreground group"
+                        >
+                          <Eye className="w-3 h-3 transition-transform duration-200 group-hover:scale-110" />
                         </Button>
                       </Link>
                     </div>
