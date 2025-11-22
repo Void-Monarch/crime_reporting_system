@@ -327,4 +327,10 @@ const components2: { title: string; href: string; description: string }[] = [
     href: "/menu/admin/reports",
     description: "Review and manage all submitted complaints",
   },
+  {
+    title: "Analytics Dashboard",
+    href: "/menu/admin/analytics",
+    description: "View insights and analytics on reported crimes",
+  },
+
 ];
